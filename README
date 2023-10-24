@@ -1,5 +1,15 @@
+## This is an archival upload of code using ACLs to faciliate access control to 'projects' within a directory -without- using root,
+applied specifically to regulate access to CSAIL lab resources on the TCNJ HPC cluster.
+
+-----------------------------------------------------------------------------------------------------
 This is a system to manage students' access to this lab folder and individual projects within them.
 
+-- Files --
+setup-project-dir.sh - used to set up a new project directory (and other shared resources)
+add-user.sh - used to add a user to this directory and grant access to particular projects + a personal working directory
+remove-user.sh - used to revoke a user's access to the lab and all projects
+
+-- Sample Setup -- 
 This is working with a setup as follows:
 
 lab folder (/projects/ourlab) set to:
@@ -48,7 +58,8 @@ not access other users' directories)
 
 Issues: 
 
-File ownership and permissions get complicated to manage.
+File ownership and permissions get complicated to manage, requiring a process to 
+'reclaim' ownership after a lab member is removed. 
 
 Examples: 
 1) If a student creates a file in a project directory and owns it, the
@@ -75,5 +86,8 @@ This workaround is something that we would need to do:
 files initially created/owned by students in project directories 
 
 
--- NOTE : I think I've debugged them, but if you see strange permissions (ie. rwx for everything) These are caused by setfacl/chmod recalculating the permissions masks for all of the files. If labpi1 is granted rwx based on acl rules, a second application of it might make the mask rwx and give execute permissions on non-executable files, which is not a good idea (and is confusing visually).
+-- NOTE : I think I've debugged this issue, but if you see strange permissions (ie. rwx for everything),
+these are caused by setfacl/chmod recalculating the permissions masks for all of the files. 
+If labpi1 is granted rwx based on acl rules, a second application of it might make the mask rwx 
+and give execute permissions on non-executable files, which is not a good idea (and is confusing visually).
   
