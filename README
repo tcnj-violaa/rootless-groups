@@ -1,0 +1,79 @@
+This is a system to manage students' access to this lab folder and individual projects within them.
+
+This is working with a setup as follows:
+
+lab folder (/projects/ourlab) set to:
+rwx for owner
+r-x for group
+--- for other 
+(ie. forbids students outside of the lab)
+
+admin folder (/projects/ourlab/admin) set to:
+rwx for owner
+--- for group
+--- for other
+(ie. the admin and only the admin is allowed access)
+
+individual project folders set up with setup script as so:
+
+rwx for owner (admin)
+r-x for group
+r-x for other (students)
+
+ACL:  default admin rwX 
+(ie. students in the labare allowed to see all project folders but must be 
+explicitly granted write access to their project folders via ACLs; files created by students
+may still be read, modified, executed, etc. by the admin)
+
+library file set up as so: 
+rwx for owner (admin)
+r-x for group
+r-x for other (students)
+
+ACL default admin rwX
+(ie. only the admin may edit files in here, but all students
+in the lab are able to access it)
+
+user directory set up as so:
+rwx for owner (admin)
+r-x for group
+r-- for other (students) (sets default permissions for user folders so other students 
+can't read other students' home directories)
+
+ACL default admin rwX
+for user 'home' directories, ACL default [respective user] rwX
+(ie. admin may rwX all user directories, each user may rwX their own directory, but
+not access other users' directories)
+
+
+Issues: 
+
+File ownership and permissions get complicated to manage.
+
+Examples: 
+1) If a student creates a file in a project directory and owns it, the
+admin cannot grant another user access to it (eg. when they add a new user
+to a project folder). This makes revoking access possibly challenging as well --
+we won't be allowed to expressly remove a user from the ACL, though it is simple
+to forbid them access to the main project folder which might accomplish 
+something similar (though having files owned by a removed user can be an issue).
+
+2) If the admin owns a file, the user can't do something as simple as a chmod +x to
+it, which may or may not be problematic if we have a case where this is needed.
+
+We can work around 1) given that the admin is expressly given permission to 
+read and write (and execute appropriate files) in all directories.
+
+It's kind of a hack, but we can create copies of files just with different
+ownership using cp --no-preserve=ownership $somefile. We would have identical files
+now with admin ownership. On the command line this works out great, though as of 
+right now the script to do this yields odd ACL entries. 
+
+This workaround is something that we would need to do:
+- after removing a user, so no files owned by users outside of the lab remain
+- before adding a user, so we can use admin ownership to grant new students access to
+files initially created/owned by students in project directories 
+
+
+-- NOTE : I think I've debugged them, but if you see strange permissions (ie. rwx for everything) These are caused by setfacl/chmod recalculating the permissions masks for all of the files. If labpi1 is granted rwx based on acl rules, a second application of it might make the mask rwx and give execute permissions on non-executable files, which is not a good idea (and is confusing visually).
+  

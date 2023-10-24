@@ -1,0 +1,9 @@
+Currently I can't really remove a user because they retain ownership of the files they create within a directory... Is this a problem in the long run? It might get cluttered but another user can still read, write, and execute it...though if we ever need to change ownership that becomes impossible unless we get root involved (which is not feasible on the cluster)
+
+Hmmmm
+
+Ah... cp --no-preserve=ownership [user-owned-file] [new-name] might be our ticket. This lets us make a copy of a file
+
+with a different owner than the original. The admin can run such a command and the owner of the identical file will become the admin.
+
+There's an issue when a student owns a file... when we try and add another student, say, the setfacl command will fail because we can't change the permissions on a file we don't own... I guess we would have to reclaim all files before we add a user?
