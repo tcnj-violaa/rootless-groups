@@ -8,6 +8,7 @@ This is a system to manage students' access to this lab folder and individual pr
 setup-project-dir.sh - used to set up a new project directory (and other shared resources)
 add-user.sh - used to add a user to this directory and grant access to particular projects + a personal working directory
 remove-user.sh - used to revoke a user's access to the lab and all projects
+admin.conf - configurable environment setup, sourced by the above scripts
 
 -- Sample Setup -- 
 This is working with a setup as follows:
